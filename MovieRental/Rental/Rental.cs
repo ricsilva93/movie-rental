@@ -10,17 +10,19 @@ namespace MovieRental.Rental
 
 		public int DaysRented { get; set; }
 
-		public Movie.Movie? Movie { get; set; }
+        public int MovieId { get; set; }
 
-		[ForeignKey("Movie")]
-		public int MovieId { get; set; }
+        [ForeignKey(nameof(MovieId))]
+        public Movie.Movie? Movie { get; set; }
+
 
 		public string PaymentMethod { get; set; } = string.Empty;
 
-		// TODO: we should have a table for the customers
-		[ForeignKey("Customer")]
+        // TODO: we should have a table for the customers
+        public int CustomerId { get; set; }
+
+        [ForeignKey(nameof(CustomerId))]
 		public Customer.Customer? Customer { get; set; }
 
-		public int CustomerId { get; set; }
 	}
 }
