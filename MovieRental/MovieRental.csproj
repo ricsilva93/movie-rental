@@ -13,8 +13,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Configuration\Exceptions\" />
-    <Folder Include="Configuration\" />
     <Folder Include="Configuration\Options\" />
   </ItemGroup>
 

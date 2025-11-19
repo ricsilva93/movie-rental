@@ -16,9 +16,11 @@ namespace MovieRental.Controllers
         }
 
         [HttpGet]
-        public IActionResult Get()
+        public async Task<IActionResult> Get()
         {
-	        return Ok(_features.GetAll());
+            var result = await _features.GetAll();
+
+            return Ok(result);
         }
 
         [HttpPost]

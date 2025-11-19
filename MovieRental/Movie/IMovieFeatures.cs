@@ -1,7 +1,10 @@
-﻿namespace MovieRental.Movie;
+﻿using MovieRental.Controllers.Dtos;
+
+namespace MovieRental.Movie;
 
 public interface IMovieFeatures
 {
 	Movie Save(Movie movie);
-	List<Movie> GetAll();
+
+    Task<PagedResult<Movie>> GetAll();
 }

@@ -1,4 +1,6 @@
-﻿using MovieRental.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using MovieRental.Controllers.Dtos;
+using MovieRental.Data;
 
 namespace MovieRental.Movie
 {
@@ -18,9 +20,14 @@ namespace MovieRental.Movie
 		}
 
 		// TODO: tell us what is wrong in this method? Forget about the async, what other concerns do you have?
-		public List<Movie> GetAll()
+		// ienumrable, page, etc
+		public async Task<PagedResult<Movie>> GetAll() //page
 		{
-			return _movieRentalDb.Movies.ToList();
+			var result = await _movieRentalDb.Movies.ToListAsync(); //TODO /me fix
+			var total = 1;
+			int page = 1;
+            int pagesize = 1;
+			return new PagedResult<Movie>(result, page, pagesize, total);
 		}
 
 
