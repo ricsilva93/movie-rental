@@ -1,9 +1,11 @@
+using MovieRental.Configuration.Infrastructure;
 using MovieRental.Data;
 using MovieRental.Movie;
 using MovieRental.Rental;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.ConfigurePaymentProviders();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
