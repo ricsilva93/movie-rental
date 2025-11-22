@@ -1,6 +1,6 @@
-﻿namespace MovieRental.Controllers.Dtos
+﻿namespace MovieRental.Controllers.DTOs
 {
-    public record MovieDTO
+    public record CustomerDTO
     {
         public int Id { get; init; }
 

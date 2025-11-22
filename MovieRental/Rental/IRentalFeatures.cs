@@ -1,8 +1,15 @@
-﻿namespace MovieRental.Rental;
+﻿using MovieRental.Controllers.Dtos;
+using MovieRental.Controllers.DTOs;
+
+namespace MovieRental.Rental;
 
 public interface IRentalFeatures
 {
-    Task<Rental> Save(Rental rental);
+    Task<Rental> SaveAsync(Rental rental);
 
-	IEnumerable<Rental> GetRentalsByCustomerName(string customerName);
+    Task<PagedResult<RentalDTO>> GetRentalsByCustomerNameAsync(
+        string customerName,
+        int page = 1,
+        int pageSize = 10,
+        CancellationToken cancellationToken = default);
 }

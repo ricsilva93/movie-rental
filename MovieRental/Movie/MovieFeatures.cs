@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MovieRental.Controllers.Dtos;
 using MovieRental.Data;
+using System.Threading;
 
 namespace MovieRental.Movie
 {
@@ -12,22 +13,32 @@ namespace MovieRental.Movie
 			_movieRentalDb = movieRentalDb;
 		}
 		
-		public Movie Save(Movie movie)
+		public Movie SaveAsync(
+			Movie movie,
+            CancellationToken cancellationToken = default)
 		{
 			_movieRentalDb.Movies.Add(movie);
-			_movieRentalDb.SaveChanges();
+			_movieRentalDb.SaveChangesAsync(cancellationToken);
 			return movie;
 		}
 
 		// TODO: tell us what is wrong in this method? Forget about the async, what other concerns do you have?
-		// ienumrable, page, etc
-		public async Task<PagedResult<Movie>> GetAll() //page
+		public async Task<PagedResult<Movie>> GetAllAsync(
+            int page = 1,
+			int pageSize = 10,
+			CancellationToken cancellationToken = default) //page
 		{
-			var result = await _movieRentalDb.Movies.ToListAsync(); //TODO /me fix
-			var total = 1;
-			int page = 1;
-            int pagesize = 1;
-			return new PagedResult<Movie>(result, page, pagesize, total);
+			var query = _movieRentalDb.Movies
+				.AsNoTracking()
+				.OrderBy(movie => movie.Id);
+
+			var total = await query.CountAsync();
+            var result = await query
+				.Skip((page - 1) * pageSize)
+				.Take(pageSize) //TODO me recheck
+				.ToListAsync(cancellationToken);
+
+			return new PagedResult<Movie>(result, page, pageSize, total);
 		}
 
 

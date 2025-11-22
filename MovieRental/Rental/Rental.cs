@@ -15,7 +15,6 @@ namespace MovieRental.Rental
         [ForeignKey(nameof(MovieId))]
         public Movie.Movie? Movie { get; set; }
 
-
 		public string PaymentMethod { get; set; } = string.Empty;
 
         // TODO: we should have a table for the customers

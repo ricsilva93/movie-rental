@@ -7,7 +7,6 @@ namespace MovieRental.Controllers
     [Route("[controller]")]
     public class MovieController : ControllerBase
     {
-
         private readonly IMovieFeatures _features;
 
         public MovieController(IMovieFeatures features)
@@ -16,17 +15,25 @@ namespace MovieRental.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> GetAsync(
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 10,
+            CancellationToken cancellationToken = default
+            )
         {
-            var result = await _features.GetAll();
+            //TODO me: validate pages
+            var result = await _features.GetAllAsync(
+                page,
+                pageSize,
+                cancellationToken);
 
             return Ok(result);
         }
 
         [HttpPost]
-        public IActionResult Post([FromBody] Movie.Movie movie)
+        public async Task<IActionResult> PostAsync([FromBody] Movie.Movie movie)
         {
-	        return Ok(_features.Save(movie));
+	        return Ok(_features.SaveAsync(movie));
         }
     }
 }

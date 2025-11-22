@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using MovieRental.Movie;
 using MovieRental.Rental;
+using System.ComponentModel.DataAnnotations;
 
 namespace MovieRental.Controllers
 {
@@ -18,9 +19,22 @@ namespace MovieRental.Controllers
 
 
         [HttpPost]
-        public IActionResult Post([FromBody] Rental.Rental rental)
+        public async Task<IActionResult> PostAsync(
+            [FromBody] Rental.Rental rental,
+            CancellationToken cancellationToken = default)
         {
-	        return Ok(_features.Save(rental));
+	        return Ok(_features.SaveAsync(rental));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAsync(
+            [Required][FromQuery] string customer,
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 10,
+            CancellationToken cancellationToken = default)
+        {
+            var result = _features.GetRentalsByCustomerNameAsync(customer, page, pageSize, cancellationToken);
+            return Ok(result);
         }
 
 	}

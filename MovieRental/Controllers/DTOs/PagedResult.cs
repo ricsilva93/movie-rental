@@ -10,12 +10,12 @@
             this.TotalPages = pageSize > 0 ? (int)Math.Ceiling((double)total / pageSize) : 1;
         }
 
-        public IEnumerable<T> Result { get; set; } = Enumerable.Empty<T>();
+        public IEnumerable<T> Result { get; init; } = Enumerable.Empty<T>();
 
-        public int PageNumber {  get; set; }
+        public int PageNumber { get; init; } = 1;
 
-        public int TotalPages { get; set; }
+        public int TotalPages { get; init; } = 1;
 
-        public int Total { get; set; }
+        public int Total { get; init; } = 0;
     }
 }
