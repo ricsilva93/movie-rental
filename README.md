@@ -50,5 +50,5 @@ Here are the specific instructions for this implementation:
 	This will provide extensability and is designed according to SOLID principles. The implementation is based on interfaces, and it is possible to add a new payment provider by simply creating a new 
 	payment provider class and implementing the IPaymentProvider interface. This will be dynamically discovered in runtime by the PaymentProviderResolver during the POST Rentals request.
 	=> As for failure handling, In this example the request will fail when the payment provider inserted is not found or if the payment provider returns false on the Pay() method. On both cases, they are 
-	throwing an exception that will be treated on the exception handling middleware. A different could be used: for instance, using a result object as return, with a succeeded true/false).
+	throwing an exception that will be treated on the exception handling middleware. A different approach could be used: for instance, using a result object as return, with a succeeded true/false).
 	This way there's no need to use exceptions to control flow.

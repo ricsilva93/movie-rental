@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using MovieRental.Configuration.Exceptions;
 using MovieRental.Configuration.Infrastructure;
 using MovieRental.Data;
@@ -32,7 +33,7 @@ app.MapControllers();
 
 using (var client = new MovieRentalDbContext())
 {
-	client.Database.EnsureCreated();
+    client.Database.Migrate();
 }
 
 app.Run();

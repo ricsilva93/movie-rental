@@ -18,8 +18,7 @@ namespace MovieRental.Movie
 			Movie movie,
             CancellationToken cancellationToken = default)
 		{
-			var entity = new Movie { Title = movie.Title };
-			_movieRentalDb.Movies.Add(entity);
+			_movieRentalDb.Movies.Add(movie);
 			await _movieRentalDb.SaveChangesAsync(cancellationToken);
 			return movie;
 		}

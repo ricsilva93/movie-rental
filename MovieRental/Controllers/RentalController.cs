@@ -1,7 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using MovieRental.Configuration.Validation;
-using MovieRental.Controllers.DTOs;
-using MovieRental.Movie;
 using MovieRental.Rental;
 using System.ComponentModel.DataAnnotations;
 
