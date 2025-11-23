@@ -1,6 +1,6 @@
 ﻿namespace MovieRental.Controllers.Dtos
 {
-    public record PagedResult<T> //todo /me change
+    public record PagedResult<T>
     {
         public PagedResult(IEnumerable<T> result, int page, int pageSize, int total)
         {
@@ -12,10 +12,10 @@
 
         public IEnumerable<T> Result { get; init; } = Enumerable.Empty<T>();
 
-        public int PageNumber { get; init; } = 1;
+        public int PageNumber { get; init; }
 
-        public int TotalPages { get; init; } = 1;
+        public int TotalPages { get; init; }
 
-        public int Total { get; init; } = 0;
+        public int Total { get; init; }
     }
 }

@@ -5,11 +5,13 @@ namespace MovieRental.Rental;
 
 public interface IRentalFeatures
 {
-    Task<Rental> SaveAsync(Rental rental);
-
-    Task<PagedResult<RentalDTO>> GetRentalsByCustomerNameAsync(
+    Task<PagedResult<RentalResponseDto>> GetRentalsByCustomerNameAsync(
         string customerName,
         int page = 1,
         int pageSize = 10,
+        CancellationToken cancellationToken = default);
+
+    Task<Rental> SaveAsync(
+        Rental rental,
         CancellationToken cancellationToken = default);
 }

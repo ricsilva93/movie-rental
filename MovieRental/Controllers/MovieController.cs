@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using MovieRental.Configuration.Validation;
 using MovieRental.Movie;
 
 namespace MovieRental.Controllers
@@ -21,7 +22,8 @@ namespace MovieRental.Controllers
             CancellationToken cancellationToken = default
             )
         {
-            //TODO me: validate pages
+            (page, pageSize) = PaginationValidator.Normalize(page, pageSize);
+
             var result = await _features.GetAllAsync(
                 page,
                 pageSize,
@@ -33,7 +35,9 @@ namespace MovieRental.Controllers
         [HttpPost]
         public async Task<IActionResult> PostAsync([FromBody] Movie.Movie movie)
         {
-	        return Ok(_features.SaveAsync(movie));
+            var result = await _features.SaveAsync(movie);
+
+            return CreatedAtAction(nameof(GetAsync), new { id = result.Id }, result);
         }
     }
 }

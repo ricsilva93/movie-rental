@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MovieRental.Controllers.Dtos;
+using MovieRental.Controllers.DTOs;
 using MovieRental.Data;
 using System.Threading;
 
@@ -13,20 +14,21 @@ namespace MovieRental.Movie
 			_movieRentalDb = movieRentalDb;
 		}
 		
-		public Movie SaveAsync(
+		public async Task<Movie> SaveAsync(
 			Movie movie,
             CancellationToken cancellationToken = default)
 		{
-			_movieRentalDb.Movies.Add(movie);
-			_movieRentalDb.SaveChangesAsync(cancellationToken);
+			var entity = new Movie { Title = movie.Title };
+			_movieRentalDb.Movies.Add(entity);
+			await _movieRentalDb.SaveChangesAsync(cancellationToken);
 			return movie;
 		}
 
 		// TODO: tell us what is wrong in this method? Forget about the async, what other concerns do you have?
-		public async Task<PagedResult<Movie>> GetAllAsync(
+		public async Task<PagedResult<MovieResponseDto>> GetAllAsync(
             int page = 1,
 			int pageSize = 10,
-			CancellationToken cancellationToken = default) //page
+			CancellationToken cancellationToken = default)
 		{
 			var query = _movieRentalDb.Movies
 				.AsNoTracking()
@@ -35,10 +37,11 @@ namespace MovieRental.Movie
 			var total = await query.CountAsync();
             var result = await query
 				.Skip((page - 1) * pageSize)
-				.Take(pageSize) //TODO me recheck
+				.Take(pageSize)
+				.Select(movie => new MovieResponseDto(movie.Id, movie.Title))
 				.ToListAsync(cancellationToken);
 
-			return new PagedResult<Movie>(result, page, pageSize, total);
+			return new PagedResult<MovieResponseDto>(result, page, pageSize, total);
 		}
 
 

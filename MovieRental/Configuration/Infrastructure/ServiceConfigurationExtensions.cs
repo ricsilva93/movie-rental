@@ -8,6 +8,7 @@ namespace MovieRental.Configuration.Infrastructure
         {
             services.AddTransient<IPaymentProvider, PayPalProvider>();
             services.AddTransient<IPaymentProvider, MbWayProvider>();
+            services.AddTransient<IPaymentProviderResolver, PaymentProviderResolver>();
 
             return services;
         }

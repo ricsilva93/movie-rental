@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
+using MovieRental.Configuration.Validation;
+using MovieRental.Controllers.DTOs;
 using MovieRental.Movie;
 using MovieRental.Rental;
 using System.ComponentModel.DataAnnotations;
@@ -23,7 +25,7 @@ namespace MovieRental.Controllers
             [FromBody] Rental.Rental rental,
             CancellationToken cancellationToken = default)
         {
-	        return Ok(_features.SaveAsync(rental));
+	        return Ok(await _features.SaveAsync(rental, cancellationToken));
         }
 
         [HttpGet]
@@ -33,7 +35,10 @@ namespace MovieRental.Controllers
             [FromQuery] int pageSize = 10,
             CancellationToken cancellationToken = default)
         {
-            var result = _features.GetRentalsByCustomerNameAsync(customer, page, pageSize, cancellationToken);
+            (page, pageSize) = PaginationValidator.Normalize(page, pageSize);
+
+            var result = await _features.GetRentalsByCustomerNameAsync(customer, page, pageSize, cancellationToken);
+
             return Ok(result);
         }
 

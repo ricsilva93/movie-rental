@@ -1,9 +1,0 @@
-﻿namespace MovieRental.Controllers.Dtos
-{
-    public record MovieDTO
-    {
-        public int Id { get; init; }
-
-        public required string Title { get; init; }
-    }
-}

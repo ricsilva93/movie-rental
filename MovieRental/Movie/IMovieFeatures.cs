@@ -1,14 +1,15 @@
 ﻿using MovieRental.Controllers.Dtos;
+using MovieRental.Controllers.DTOs;
 
 namespace MovieRental.Movie;
 
 public interface IMovieFeatures
 {
-    Movie SaveAsync(
+    Task<Movie> SaveAsync(
             Movie movie,
             CancellationToken cancellationToken = default);
 
-    Task<PagedResult<Movie>> GetAllAsync(
+    Task<PagedResult<MovieResponseDto>> GetAllAsync(
         int page = 1,
         int pageSize = 20,
         CancellationToken cancellationToken = default);

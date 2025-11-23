@@ -1,3 +1,4 @@
+using MovieRental.Configuration.Exceptions;
 using MovieRental.Configuration.Infrastructure;
 using MovieRental.Data;
 using MovieRental.Movie;
@@ -12,6 +13,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddEntityFrameworkSqlite().AddDbContext<MovieRentalDbContext>();
 
 builder.Services.AddScoped<IRentalFeatures, RentalFeatures>();
+builder.Services.AddScoped<IMovieFeatures, MovieFeatures>();
 
 var app = builder.Build();
 
@@ -25,6 +27,7 @@ app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
+app.UseMiddleware<ExceptionHandlerMiddleware>();
 app.MapControllers();
 
 using (var client = new MovieRentalDbContext())
