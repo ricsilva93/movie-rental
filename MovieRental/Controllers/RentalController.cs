@@ -21,6 +21,7 @@ namespace MovieRental.Controllers
         [HttpPost]
         [ProducesResponseType(typeof(Rental.Rental), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status422UnprocessableEntity)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> PostAsync(
             [FromBody] Rental.Rental rental,
