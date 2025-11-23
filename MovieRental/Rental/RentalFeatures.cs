@@ -1,28 +1,27 @@
-﻿using Microsoft.EntityFrameworkCore;
-using MovieRental.Configuration.Exceptions;
-using MovieRental.Controllers.Dtos;
+﻿using MovieRental.Configuration.Exceptions;
+using MovieRental.Configuration.Validation;
 using MovieRental.Controllers.DTOs;
-using MovieRental.Data;
 using MovieRental.PaymentProviders;
+using MovieRental.Rental.Repositories;
 
 namespace MovieRental.Rental
 {
-	public class RentalFeatures : IRentalFeatures
-	{
-		private readonly MovieRentalDbContext _movieRentalDb;
+    public class RentalFeatures : IRentalFeatures
+    {
+        private readonly IRentalRepository _rentalRepository;
 
         private readonly IPaymentProviderResolver _paymentProviderFactory;
-		public RentalFeatures(
-            MovieRentalDbContext movieRentalDb,
+        public RentalFeatures(
+            IRentalRepository rentalRepository,
             IPaymentProviderResolver paymentProviderFactory)
-		{
-			_movieRentalDb = movieRentalDb;
+        {
+            _rentalRepository = rentalRepository;
             _paymentProviderFactory = paymentProviderFactory;
-		}
+        }
 
-		//TODO: make me async :(
-		public async Task<Rental> SaveAsync(Rental rental, CancellationToken cancellationToken = default)
-		{
+        //TODO: make me async :(
+        public async Task<Rental> SaveAsync(Rental rental, CancellationToken cancellationToken = default)
+        {
             var paymentProvider = _paymentProviderFactory.GetPaymentProviderByName(rental.PaymentMethod);
 
             var price = new Random().NextDouble() * rental.DaysRented;
@@ -33,50 +32,24 @@ namespace MovieRental.Rental
                 throw new PaymentFailedException("Payment failed.");
             }
 
-			_movieRentalDb.Rentals.Add(rental);
-			await _movieRentalDb.SaveChangesAsync();
-			
-            return rental;
+            return await _rentalRepository.SaveAsync(rental, cancellationToken);
         }
 
-		//TODO: finish this method and create an endpoint for it
-		public async Task<PagedResult<RentalResponseDto>> GetRentalsByCustomerNameAsync(
-			string customerName,
+        //TODO: finish this method and create an endpoint for it
+        public async Task<PagedResult<RentalResponseDto>> GetRentalsByCustomerNameAsync(
+            string customerName,
             int page = 1,
             int pageSize = 10,
             CancellationToken cancellationToken = default)
-		{
-            var query = _movieRentalDb.Rentals
-                .AsNoTracking()
-                .Include(rental => rental.Customer)
-                .Include(rental => rental.Movie)
-                .OrderBy(rental => rental.Id)
-                .AsQueryable();
-
-            if (!string.IsNullOrWhiteSpace(customerName))
+        {
+            if (string.IsNullOrWhiteSpace(customerName))
             {
-                query = query.Where(rental =>
-                    rental.Customer!.Name.Contains(customerName));
+                throw new ArgumentException("Customer Name cannot be empty.");
             }
 
-            var total = await query.CountAsync(cancellationToken);
+            (page, pageSize) = PaginationValidator.Normalize(page, pageSize);
 
-            var result = await query
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize)
-                .Select(rental => new RentalResponseDto(
-                    rental.Id,
-                    rental.CustomerId,
-                    rental.MovieId,
-                    rental.DaysRented,
-                    rental.PaymentMethod,
-                    rental.Customer!.Name,
-                    rental.Movie!.Title
-                ))
-                .ToListAsync(cancellationToken);
-
-            return new PagedResult<RentalResponseDto>(result, page, pageSize, total);
+            return await _rentalRepository.GetRentalsByCustomerNameAsync(customerName, page, pageSize, cancellationToken);
         }
-
-	}
+    }
 }

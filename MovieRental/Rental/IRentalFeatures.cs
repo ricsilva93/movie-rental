@@ -1,5 +1,4 @@
-﻿using MovieRental.Controllers.Dtos;
-using MovieRental.Controllers.DTOs;
+﻿using MovieRental.Controllers.DTOs;
 
 namespace MovieRental.Rental;
 

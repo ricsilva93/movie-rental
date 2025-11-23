@@ -7,6 +7,7 @@ using MovieRental.Rental;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.ConfigureRepositories();
 builder.Services.ConfigurePaymentProviders();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -33,7 +34,7 @@ app.MapControllers();
 
 using (var client = new MovieRentalDbContext())
 {
-    client.Database.Migrate();
+    await client.Database.MigrateAsync();
 }
 
 app.Run();

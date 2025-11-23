@@ -42,8 +42,6 @@ namespace MovieRental.Controllers
             [FromQuery] int pageSize = 10,
             CancellationToken cancellationToken = default)
         {
-            (page, pageSize) = PaginationValidator.Normalize(page, pageSize);
-
             var result = await _features.GetRentalsByCustomerNameAsync(customer, page, pageSize, cancellationToken);
 
             return Ok(result);

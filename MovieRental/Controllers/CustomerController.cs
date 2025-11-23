@@ -29,7 +29,7 @@ namespace MovieRental.Controllers
         {
             _dbcontext.Customers.Add(customer);
             await _dbcontext.SaveChangesAsync(cancellationToken);
-            return CreatedAtAction(nameof(GetAllAsync), new { id = customer.Id }, customer);
+            return Created("", customer);
         }
     }
 }
