@@ -1,34 +1,23 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using System;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace MovieRental.Configuration.Exceptions
 {
     public class ExceptionHandlerMiddleware
     {
         private readonly RequestDelegate _next;
-        private readonly ILogger<ExceptionHandlerMiddleware> _log;
 
         public ExceptionHandlerMiddleware(
-            RequestDelegate next,
-            ILogger<ExceptionHandlerMiddleware> log)
+            RequestDelegate next)
         {
             _next = next;
-            _log = log;
         }
-
-        private static Dictionary<Type, ProblemDetails> ErrorMap = new Dictionary<Type, ProblemDetails>()
-        {
-            {typeof(PaymentFailedException), new ProblemDetails{
-                Status = StatusCodes.Status422UnprocessableEntity,
-                Title = "Payment Failed"} },
-            {typeof(PaymentProviderNotFoundException), new ProblemDetails{
-                Status = StatusCodes.Status400BadRequest,
-                Title = "Payment Provider Not Found"} },
-            {typeof(ArgumentException), new ProblemDetails{
-                Status = StatusCodes.Status400BadRequest,
-                Title = "Bad Request"} },
-        };
+        private static readonly Dictionary<Type, (int Status, string Title)> ErrorMap =
+            new()
+            {
+                    { typeof(PaymentFailedException), (StatusCodes.Status422UnprocessableEntity, "Payment Failed") },
+                    { typeof(PaymentProviderNotFoundException), (StatusCodes.Status400BadRequest, "Payment Provider Not Found") },
+                    { typeof(ArgumentException), (StatusCodes.Status400BadRequest, "Bad Request") }
+            };
 
         public async Task InvokeAsync(HttpContext context)
         {
@@ -38,29 +27,36 @@ namespace MovieRental.Configuration.Exceptions
             }
             catch (Exception ex)
             {
+                var error = MapToProblemDetails(ex, context);
+
                 context.Response.ContentType = "application/json";
-                var errorDetails = new ProblemDetails();
+                context.Response.StatusCode = error.Status ?? StatusCodes.Status500InternalServerError;
 
-                if (ErrorMap.TryGetValue(ex.GetType(), out var mappedError))
-                {
-                    errorDetails = mappedError;
-                    errorDetails.Detail = ex.Message;
-                }
-                else
-                {
-                    context.Response.StatusCode = StatusCodes.Status500InternalServerError;
-                    errorDetails = new ProblemDetails
-                    {
-                        Status = StatusCodes.Status500InternalServerError,
-                        Title = "Unexpected Error",
-                        //Detail = "An unexpected error has ocurred"
-                    };
-                }
-
-                errorDetails.Detail = ex.Message;
-                context.Response.StatusCode = errorDetails.Status!.Value;
-                await context.Response.WriteAsJsonAsync(errorDetails);
+                await context.Response.WriteAsJsonAsync(error);
             }
+        }
+
+        private ProblemDetails MapToProblemDetails(Exception ex, HttpContext context)
+        {
+            var mapping = ErrorMap
+                .FirstOrDefault(m => m.Key.IsAssignableFrom(ex.GetType()));
+
+            if (mapping.Key != null)
+            {
+                return new ProblemDetails
+                {
+                    Status = mapping.Value.Status,
+                    Title = mapping.Value.Title,
+                    Detail = ex.Message,
+                };
+            }
+
+            return new ProblemDetails
+            {
+                Status = StatusCodes.Status500InternalServerError,
+                Title = "Unexpected Error",
+                Detail = "An unexpected error has occurred.",
+            };
         }
     }
 }

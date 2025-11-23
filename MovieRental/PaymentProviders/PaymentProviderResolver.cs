@@ -13,7 +13,7 @@ namespace MovieRental.PaymentProviders
 
         public IPaymentProvider GetPaymentProviderByName(string name)
         {
-            if (Enum.TryParse(name, out PaymentProviderType providerType))
+            if (Enum.TryParse(name, true, out PaymentProviderType providerType))
             {
                 return _providers[providerType];
             }
