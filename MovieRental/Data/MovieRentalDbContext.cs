@@ -21,5 +21,15 @@ namespace MovieRental.Data
 
 		protected override void OnConfiguring(DbContextOptionsBuilder options)
 			=> options.UseSqlite($"Data Source={DbPath}");
-	}
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+		{
+            modelBuilder.Entity<Customer.Customer>().HasData(
+                new Customer.Customer { Id = 1, Name = "ricardo" },
+                new Customer.Customer { Id = 2, Name = "maria" },
+                new Customer.Customer { Id = 3, Name = "diogo" }
+            );
+        }
+
+    }
 }

@@ -15,7 +15,7 @@ namespace MovieRental.Configuration.Exceptions
             new()
             {
                     { typeof(PaymentFailedException), (StatusCodes.Status422UnprocessableEntity, "Payment Failed") },
-                    { typeof(PaymentProviderNotFoundException), (StatusCodes.Status400BadRequest, "Payment Provider Not Found") },
+                    { typeof(PaymentProviderNotFoundException), (StatusCodes.Status400BadRequest, "Payment Provider Not Supported") },
                     { typeof(ArgumentException), (StatusCodes.Status400BadRequest, "Bad Request") }
             };
 

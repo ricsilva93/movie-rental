@@ -1,4 +1,4 @@
-﻿namespace MovieRental.Controllers.Dtos
+﻿namespace MovieRental.Controllers.DTOs
 {
     public record PagedResult<T>
     {

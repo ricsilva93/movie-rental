@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using MovieRental.Configuration.Validation;
+using MovieRental.Controllers.DTOs;
 using MovieRental.Rental;
 using System.ComponentModel.DataAnnotations;
 
@@ -19,14 +20,22 @@ namespace MovieRental.Controllers
 
 
         [HttpPost]
+        [ProducesResponseType(typeof(Rental.Rental), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> PostAsync(
             [FromBody] Rental.Rental rental,
             CancellationToken cancellationToken = default)
         {
-	        return Ok(await _features.SaveAsync(rental, cancellationToken));
+            var result = await _features.SaveAsync(rental, cancellationToken);
+
+            return Created("", result);
         }
 
         [HttpGet]
+        [ProducesResponseType(typeof(PagedResult<RentalResponseDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetAsync(
             [Required][FromQuery] string customer,
             [FromQuery] int page = 1,

@@ -70,8 +70,8 @@ namespace MovieRental.Rental
                     rental.MovieId,
                     rental.DaysRented,
                     rental.PaymentMethod,
-                    rental.Movie!.Title,
-                    rental.Customer!.Name
+                    rental.Customer!.Name,
+                    rental.Movie!.Title
                 ))
                 .ToListAsync(cancellationToken);
 
